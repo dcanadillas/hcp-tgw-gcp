@@ -38,9 +38,30 @@ resource "hcp_aws_transit_gateway_attachment" "example" {
 resource "hcp_hvn_route" "route" {
   hvn_link         = data.hcp_hvn.main.self_link
   hvn_route_id     = "hvn-to-tgw-attachment"
-  destination_cidr = data.aws_vpc.selected.cidr_block
+  # destination_cidr = data.aws_vpc.selected.cidr_block
+  destination_cidr = google_compute_subnetwork.network_subnet1.ip_cidr_range
   target_link      = hcp_aws_transit_gateway_attachment.example.self_link
 }
+
+# GCP subnets can have a secondary range of IPs (For example if a GKE cluster is deployed later in that subnet). This is the secondary range for the subnet
+resource "hcp_hvn_route" "secondary_routes" {
+  count = try(length(data.google_compute_subnetwork.network_subnet1.secondary_ip_range),0)
+  hvn_link         = data.hcp_hvn.main.self_link
+  hvn_route_id     = "hvn-to-tgw-attachment-sec${count.index}"
+  # destination_cidr = data.aws_vpc.selected.cidr_block
+  destination_cidr = data.google_compute_subnetwork.network_subnet1.secondary_ip_range[count.index].ip_cidr_range
+  target_link      = hcp_aws_transit_gateway_attachment.example.self_link
+}
+
+resource "hcp_hvn_route" "secondary_routes2" {
+  count = try(length(data.google_compute_subnetwork.network_subnet2.secondary_ip_range),0)
+  hvn_link         = data.hcp_hvn.main.self_link
+  hvn_route_id     = "hvn-to-tgw-attachment-sec${count.index}"
+  # destination_cidr = data.aws_vpc.selected.cidr_block
+  destination_cidr = data.google_compute_subnetwork.network_subnet2.secondary_ip_range[count.index].ip_cidr_range
+  target_link      = hcp_aws_transit_gateway_attachment.example.self_link
+}
+
 
 resource "aws_ec2_transit_gateway_vpc_attachment_accepter" "example" {
   transit_gateway_attachment_id = hcp_aws_transit_gateway_attachment.example.provider_transit_gateway_attachment_id

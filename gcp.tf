@@ -1,3 +1,13 @@
+data "google_compute_subnetwork" "network_subnet1" {
+  depends_on = [ google_compute_subnetwork.network_subnet1 ]
+  self_link   = google_compute_subnetwork.network_subnet1.self_link
+}
+data "google_compute_subnetwork" "network_subnet2" {
+  depends_on = [ google_compute_subnetwork.network_subnet2 ]
+  self_link   = google_compute_subnetwork.network_subnet2.self_link
+}
+
+
 resource "google_compute_ha_vpn_gateway" "ha_gateway" {
   region   = var.gcp_region
   name     = "gcp-vpn-to-aws"

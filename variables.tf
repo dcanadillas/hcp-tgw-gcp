@@ -4,9 +4,9 @@ variable "vpc_region" {
   description = "The name of the AWS region to set up a network within"
   default = "eu-west-1"
 }
-variable "vpc_id" {
-  description = "The VPC ID"
-}
+# variable "vpc_id" {
+#   description = "The VPC ID"
+# }
 
 
 # GCP Resources variables
