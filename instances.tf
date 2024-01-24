@@ -11,12 +11,13 @@ resource "google_compute_firewall" "default" {
   name    = "hashi-rules"
   network = google_compute_network.network.name
 
-  # We are opening some ports related to Vault and Consul
+  # We are opening some ports related to Vault and Consul for testing purposes
   allow {
     protocol = "tcp"
     ports    = [
       "22",
-      "443", 
+      "443",
+      "8443",
       "8200", 
       "8250",
       "8501",
@@ -38,6 +39,24 @@ resource "google_compute_firewall" "default" {
   }
 
   source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["${var.owner}"]
+}
+
+resource "google_compute_firewall" "internal" {
+  name    = "hashi-rules-internal"
+  network = google_compute_network.network.name
+
+  # We allow all traffic inside the network
+  allow {
+    protocol = "tcp"
+    ports    = []
+  }
+  allow {
+    protocol = "udp"
+    ports    = []
+  }
+
+  source_tags = ["${var.owner}"]
   target_tags   = ["${var.owner}"]
 }
 
