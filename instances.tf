@@ -24,7 +24,8 @@ resource "google_compute_firewall" "default" {
       "8301",
       "8302",
       "8502",
-      "8503"
+      "8503",
+      "21000"
     ]
   }
   allow {

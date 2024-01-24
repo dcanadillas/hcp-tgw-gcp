@@ -2,9 +2,9 @@ data "hcp_hvn" "main" {
   hvn_id = var.hvn_id
 }
 
-data "aws_vpc" "selected" {
-  id = var.vpc_id
-}
+# data "aws_vpc" "selected" {
+#   id = var.vpc_id
+# }
 
 resource "aws_ec2_transit_gateway" "example" {
   description = "tgw-demo"
