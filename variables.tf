@@ -36,6 +36,17 @@ variable "gcp_zone" {
     description = "GCP zone for the nodes"
     default = "europe-west1-b"
 }
+variable "gcp_subnets" {
+    description = "GCP subnet 1"
+    type = list(string)
+    default = ["ha-vpn-subnet-1", "ha-vpn-subnet-2"]
+}
+# It is possible that the subnet has secondary ranges for GKE clusters
+variable "secondary_ranges" {
+    description = "Set this to true if you deployed a GKE cluster in the subnet after creating it in previous executions"
+    type = bool
+    default = false
+}
 
 
 # HCP Resources variables

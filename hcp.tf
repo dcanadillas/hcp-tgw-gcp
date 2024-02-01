@@ -1,3 +1,4 @@
+
 data "hcp_consul_cluster" "example" {
   count = var.consul_cluster != "" ? 1 : 0
   cluster_id = var.consul_cluster
@@ -45,7 +46,9 @@ resource "hcp_hvn_route" "route" {
 
 # GCP subnets can have a secondary range of IPs (For example if a GKE cluster is deployed later in that subnet). This is the secondary range for the subnet
 resource "hcp_hvn_route" "secondary_routes" {
-  count = try(length(data.google_compute_subnetwork.network_subnet1.secondary_ip_range),0)
+  depends_on = [ data.google_compute_subnetwork.network_subnet1 ]
+  # for_each = local.secondary_ranges
+  count = var.secondary_ranges ? length(data.google_compute_subnetwork.network_subnet1.secondary_ip_range) : 0
   hvn_link         = data.hcp_hvn.main.self_link
   hvn_route_id     = "hvn-to-tgw-attachment-sec${count.index}"
   # destination_cidr = data.aws_vpc.selected.cidr_block
@@ -54,7 +57,8 @@ resource "hcp_hvn_route" "secondary_routes" {
 }
 
 resource "hcp_hvn_route" "secondary_routes2" {
-  count = try(length(data.google_compute_subnetwork.network_subnet2.secondary_ip_range),0)
+  depends_on = [ data.google_compute_subnetwork.network_subnet2 ]
+  count = var.secondary_ranges ? length(data.google_compute_subnetwork.network_subnet2.secondary_ip_range) : 0
   hvn_link         = data.hcp_hvn.main.self_link
   hvn_route_id     = "hvn-to-tgw-attachment-sec${count.index}"
   # destination_cidr = data.aws_vpc.selected.cidr_block

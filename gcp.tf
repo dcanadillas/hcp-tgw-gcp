@@ -5,8 +5,8 @@ data "google_compute_subnetwork" "network_subnet1" {
 data "google_compute_subnetwork" "network_subnet2" {
   depends_on = [ google_compute_subnetwork.network_subnet2 ]
   self_link   = google_compute_subnetwork.network_subnet2.self_link
+  # name = var.gcp_subnets[1]
 }
-
 
 resource "google_compute_ha_vpn_gateway" "ha_gateway" {
   region   = var.gcp_region
@@ -31,14 +31,14 @@ resource "google_compute_network" "network" {
 }
 
 resource "google_compute_subnetwork" "network_subnet1" {
-  name          = "ha-vpn-subnet-1"
+  name          = var.gcp_subnets[0]
   ip_cidr_range = "10.0.1.0/24"
   region        = var.gcp_region
   network       = google_compute_network.network.id
 }
 
 resource "google_compute_subnetwork" "network_subnet2" {
-  name          = "ha-vpn-subnet-2"
+  name          = var.gcp_subnets[1]
   ip_cidr_range = "10.0.2.0/24"
   region        = var.gcp_region
   network       = google_compute_network.network.id
